@@ -17,6 +17,7 @@ void	init_flags(t_flags flags)
 	flags.width = 0;
 	flags.precision = 0;
 	flags.dot = 0;
+	flags.count = 0;
 }
 
 int		count_ints(long num, int base)
@@ -66,12 +67,22 @@ void	treat_d(t_flags flags, va_list ag)
 	long f;
 	int size;
 	int pad;
+	int zeroes;
 	
 	f = va_arg(ag, int);
 	size = count_ints(f, 10);
+	if (flags.precision > size)
+	{
+		zeroes = flags.precision - size;
+		while (zeroes > 0)
+		{
+			write(1, "0", 1);
+			zeroes--;
+		}
+	}
 	if (flags.width > size)
 	{
-		pad = flags.width - size;
+		pad = flags.width - (size + flags.precision);
 		while (pad > 0)
 		{
 			write(1, " ", 1);
@@ -141,7 +152,6 @@ int ft_printf(const char *str, ...)
     va_list ag;
 	t_flags flags;
 
-	p_size = 0;
 	init_flags(flags);
     va_start(ag, str);
 	ft_printf_aux(str, ag, flags);
@@ -151,7 +161,7 @@ int ft_printf(const char *str, ...)
 
 int main()
 {
-	ft_printf("%3d\n", 15);
-	// printf("%12d", 15);
+	ft_printf("%.6d\n", 15);
+	// printf("%5.5d", 15);
 	return (0);
 }
